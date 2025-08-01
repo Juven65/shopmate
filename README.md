@@ -22,6 +22,7 @@ and a powerful admin dashboard with **interactive charts** and **stock managemen
 - [⚙️ Setup Instructions](#️-setup-instructions)
 - [🌐 Live Demo](#-live-demo)
 - [📜 License](#-license)
+- [👨‍💻 Author](#-author)
 
 ---
 
