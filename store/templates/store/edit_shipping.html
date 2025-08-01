@@ -1,0 +1,65 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block content %}
+
+{% if messages %}
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+  {% for message in messages %}
+    <div class="toast align-items-center text-white bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">
+          {{ message }}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0"><i class="fa-solid fa-pen-to-square me-2"></i>Edit Shipping Address</h4>
+        </div>
+        <div class="card-body">
+          <form method="POST" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label">{{ field.label_tag }}</label>
+                {{ field }}
+                {% if field.errors %}
+                  <div class="text-danger small">{{ field.errors }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+            <div class="d-flex justify-content-between">
+              <a href="{% url 'profile' %}" class="btn btn-outline-secondary">
+                <i class="fa-solid fa-arrow-left"></i> Back to Profile
+              </a>
+              <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-save"></i> Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const toastElList = [].slice.call(document.querySelectorAll('.toast'));
+    toastElList.map(function (toastEl) {
+      new bootstrap.Toast(toastEl, { delay: 3000 }).show();
+    });
+  });
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Create Account</h2>
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="id_username" class="form-label">Username</label>
+      <input type="text" name="username" id="id_username" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="id_email" class="form-label">Email</label>
+      <input type="email" name="email" id="id_email" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="id_password" class="form-label">Password</label>
+      <input type="password" name="password" id="id_password" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+    <p class="mt-2">
+      <span class="text-lead lead">Have an account? </span><a href="{% url 'login' %}">Login</a><br>
+    </p>
+  </form>
+</div>
+{% endblock %}

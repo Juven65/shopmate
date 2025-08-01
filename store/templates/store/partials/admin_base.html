@@ -1,0 +1,180 @@
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ShopMate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .sidebar {
+            min-width: 220px;
+            min-height: 100vh;
+            background-color: #212529;
+        }
+
+        .sidebar .nav-link {
+            color: white;
+            padding: 10px 15px;
+            display: block;
+            border-radius: 6px;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.25);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                min-height: auto;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="{% url 'product-list' %}">ShopMate 🛍️</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                    aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+
+
+            <!-- Top navbar links -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <form class="d-flex ms-auto" method="get" action="{% url 'admin-search' %}">
+                  <select name="category" class="form-select me-2" required>
+                    <option value="">🔎 Filter</option>
+                    <option value="product">🛍️ Products</option>
+                    <option value="user">👤 Users</option>
+                    <option value="order">📦 Orders</option>
+                  </select>
+                  <input class="form-control me-2" type="search" name="query" placeholder="Search..." required>
+                  <button class="btn btn-outline-light" type="submit">Search</button>
+                </form>
+
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                  {% if user.is_authenticated %}
+
+                    {% if user.is_staff %}
+                      <!-- Admin Notifications -->
+                      <li class="nav-item position-relative">
+                        <a class="nav-link" href="{% url 'admin-dashboard' %}">📊 Dashboard</a>
+                        {% if new_orders %}
+                          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ new_orders }}
+                          </span>
+                        {% endif %}
+                      </li>
+
+                      <li class="nav-item position-relative">
+                        <a class="nav-link" href="{% url 'manage-reviews' %}">📝 Reviews</a>
+                        {% if new_pending_reviews %}
+                          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
+                            {{ new_pending_reviews }}
+                          </span>
+                        {% endif %}
+                      </li>
+
+                      <li class="nav-item position-relative">
+                          <a class="nav-link" href="{% url 'manage-contact-messages' %}">📬 Contact</a>
+                          {% if new_contact_messages %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info text-dark">
+                              {{ new_contact_messages }}
+                            </span>
+                          {% endif %}
+                        </li>
+                    {% endif %}
+
+                    <li class="nav-item"><a class="nav-link" href="{% url 'view-cart' %}">🛒 Cart</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'order-history' %}">📦 My Orders</a></li>
+                    <li class="nav-item"><a class="nav-link text-danger" href="{% url 'logout' %}">🚪 Logout</a></li>
+
+                  {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">🔐 Login</a></li>
+                  {% endif %}
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+
+<div class="d-flex flex-column flex-lg-row">
+    <!-- Sidebar -->
+    <div class="sidebar p-3">
+        <h5 class="text-white mb-4">Admin Panel</h5>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a href="{% url 'admin-dashboard' %}"
+                   class="nav-link {% if request.path == '/admin-dashboard/' %}active{% endif %}">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'manage-orders' %}"
+                   class="nav-link {% if request.path == '/manage-orders/' %}active{% endif %}">
+                    <i class="bi bi-box-seam"></i> Manage Orders
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'manage-reviews' %}"
+                   class="nav-link {% if request.path == '/manage-reviews/' %}active{% endif %}">
+                    <i class="bi bi-chat-left-text"></i> Manage Reviews
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'product-list' %}"
+                   class="nav-link {% if request.path == '/product-list/' %}active{% endif %}">
+                    <i class="bi bi-box"></i> Product List
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'add-product' %}"
+                   class="nav-link {% if request.path == '/add-product/' %}active{% endif %}">
+                    <i class="bi bi-plus-circle"></i> Add Product
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'manage-contact-messages' %}"
+                   class="nav-link {% if request.path == '/contact-messages/' %}active{% endif %}">
+                    <i class="bi bi-envelope"></i> Contact Messages
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'logout' %}" class="nav-link text-danger">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </li>
+
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="p-4 w-100">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

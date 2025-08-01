@@ -1,0 +1,72 @@
+{% extends 'store/partials/admin_base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">📝 Manage Product Reviews</h2>
+    <a href="{% url 'admin-dashboard' %}" class="btn btn-danger">
+      <i class="bi bi-arrow-left"></i> Back
+    </a>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <table class="table table-striped mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>User</th>
+            <th>Product</th>
+            <th>Rating</th>
+            <th>Message</th>
+            <th>Date</th>
+            <th style="width: 300px;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for review in reviews %}
+          <tr>
+            <td>{{ review.user.username }}</td>
+            <td>{{ review.product.name }}</td>
+            <td>{{ review.rating }}</td>
+            <td>{{ review.content|truncatechars:60 }}</td>
+            <td>{{ review.created_at|date:"M d, Y H:i" }}</td>
+            <td>
+              <div class="mb-2">
+                {% if not review.is_approved %}
+                  <form action="{% url 'approve-review' review.id %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-success">✅ Approve</button>
+                  </form>
+                {% else %}
+                  <span class="badge bg-success">Approved</span>
+                {% endif %}
+
+                <form action="{% url 'delete-review' review.id %}" method="post" class="d-inline">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this review?')">🗑️ Delete</button>
+                </form>
+              </div>
+
+              <form action="{% url 'reply-to-review' review.id %}" method="post">
+                {% csrf_token %}
+                <textarea name="admin_reply" class="form-control form-control-sm mb-2" rows="2" placeholder="Write a reply...">{{ review.admin_reply }}</textarea>
+                <button type="submit" class="btn btn-sm btn-primary">💬 Reply</button>
+              </form>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="6" class="text-center text-muted">No reviews found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'store/partials/admin_base.html' %}
+
+{% block content %}
+<h3>Update Tracking Number for Order #{{ order.id }}</h3>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button class="btn btn-primary" type="submit">Save</button>
+  <a href="{% url 'manage-orders' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-primary">
+      <i class="bi bi-envelope-fill me-2"></i>Contact Us
+    </h2>
+    <a href="{% url 'home' %}" class="btn btn-outline-danger">
+      <i class="bi bi-arrow-left"></i> Back
+    </a>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+      <form method="POST" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label fw-semibold"><i class="bi bi-person-fill me-1"></i>Name</label>
+          {{ form.name.label_tag }} {{ form.name }}
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold"><i class="bi bi-envelope-fill me-1"></i>Email</label>
+          {{ form.email.label_tag }} {{ form.email }}
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold"><i class="bi bi-tag-fill me-1"></i>Subject</label>
+          {{ form.subject.label_tag }} {{ form.subject }}
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold"><i class="bi bi-chat-text-fill me-1"></i>Message</label>
+          {{ form.message.label_tag }} {{ form.message }}
+        </div>
+        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">
+          <i class="bi bi-send-fill me-1"></i>Send Message
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

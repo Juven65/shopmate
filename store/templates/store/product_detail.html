@@ -1,0 +1,159 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  #mainProductImage:hover {
+    transform: scale(1.1);
+    transition: 0.3s ease-in-out;
+  }
+
+  .star-rating {
+    font-size: 1.5rem;
+    color: #ccc;
+    cursor: pointer;
+  }
+
+  .star-rating .selected {
+    color: gold;
+  }
+
+  .text-warning {
+    color: gold !important;
+  }
+
+  .text-secondary {
+    color: #ccc !important;
+  }
+</style>
+
+<div class="container mt-4">
+  <div class="row">
+    <!-- Product Image and Thumbnails -->
+    <div class="col-md-6">
+      <div class="main-image mb-3">
+        <img id="mainProductImage" src="{{ product.image.url }}" class="img-fluid border" style="max-height: 400px;">
+      </div>
+      <div class="d-flex gap-2">
+        <img src="{{ product.image.url }}" class="img-thumbnail" style="width: 80px; height: 80px; cursor: pointer;" onclick="changeMainImage(this.src)">
+        {% for img in product.images.all %}
+          <img src="{{ img.image.url }}" class="img-thumbnail" style="width: 80px; height: 80px; cursor: pointer;" onclick="changeMainImage(this.src)">
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Product Info -->
+    <div class="col-md-6">
+      <h3>{{ product.name }}</h3>
+      <p>{{ product.description }}</p>
+      <h4>₱{{ product.price }}</h4>
+
+      {% if product.stock > 0 %}
+        <a href="{% url 'add-to-cart' product.id %}" class="btn btn-primary mt-2">Add to Cart</a>
+      {% else %}
+        <button class="btn btn-secondary mt-2" disabled>Out of Stock</button>
+      {% endif %}
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <!-- Review Form -->
+  {% if user.is_authenticated and form %}
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="mb-3">Leave a Review</h4>
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-2">
+            <label>Rating:</label><br>
+            <span class="star-rating">
+              {% for i in "12345" %}
+                <span class="star" data-value="{{ i }}">&#9733;</span>
+              {% endfor %}
+            </span>
+            <input type="hidden" name="rating" id="ratingInput" value="0">
+          </div>
+          <div class="mb-3">
+            <textarea name="content" class="form-control" rows="3" placeholder="Write your review..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-success">Submit Review</button>
+        </form>
+      </div>
+    </div>
+  {% elif not user.is_authenticated %}
+    <p><a href="{% url 'login' %}">Login</a> to leave a review.</p>
+  {% endif %}
+
+  <!-- Customer Reviews -->
+  <div class="row mt-4">
+    <div class="col-md-8">
+      <h4>Customer Reviews</h4>
+
+      {% if average_rating %}
+        <p class="mb-2">⭐ Average Rating: {{ average_rating|floatformat:1 }}/5</p>
+      {% else %}
+        <p>No reviews yet.</p>
+      {% endif %}
+
+      {% for review in reviews %}
+        <div class="border rounded p-3 mb-3">
+          <strong>{{ review.user.username }}</strong>
+          <div class="border p-3 rounded mb-3">
+            <p><strong>{{ review.user.username }}</strong> rated ⭐{{ review.rating }}</p>
+            <p>{{ review.content }}</p>
+            <p class="text-muted"><small>{{ review.created_at|date:"M d, Y - H:i" }}</small></p>
+
+            {% if review.reply %}
+              <div class="mt-2 p-2 bg-light border-start border-success ps-3">
+                <strong>Admin replied:</strong>
+                <p>{{ review.reply }}</p>
+                <p class="text-muted"><small>🕒 {{ review.updated_at|date:"M d, Y - H:i" }}</small></p>
+              </div>
+            {% endif %}  {# ← Missing this one #}
+
+            {% if user == review.user %}
+              <div class="my-2">
+                <a href="{% url 'edit-review' review.id %}" class="btn btn-sm btn-warning">✏️ Edit</a>
+                <form action="{% url 'delete-my-review' review.id %}" method="post" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete your review?')">🗑️ Delete</button>
+                </form>
+              </div>
+            {% endif %}
+          </div>
+
+          {% if review.admin_reply %}
+            <div class="bg-light p-2 mt-2 rounded border">
+              <strong>🛠️ Admin Reply:</strong>
+              <p>{{ review.admin_reply }}</p>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+  function changeMainImage(src) {
+    document.getElementById('mainProductImage').src = src;
+  }
+
+  // ⭐️ Rating stars interactivity
+  document.querySelectorAll('.star-rating .star').forEach(function (star) {
+    star.addEventListener('click', function () {
+      let value = this.getAttribute('data-value');
+      document.getElementById('ratingInput').value = value;
+
+      document.querySelectorAll('.star-rating .star').forEach(function (s, index) {
+        if (index < value) {
+          s.classList.add('selected');
+        } else {
+          s.classList.remove('selected');
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

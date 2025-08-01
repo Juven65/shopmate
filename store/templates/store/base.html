@@ -1,0 +1,200 @@
+{% load static %}
+
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShopMate</title>
+
+  <!-- Bootstrap CSS & Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap JS (includes collapse!) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+    body {
+      min-height: 100vh;
+    }
+
+    .sidebar-link {
+      color: white;
+      text-decoration: none;
+      padding: 10px 15px;
+      display: block;
+      border-radius: 8px;
+      transition: background 0.2s ease-in-out;
+    }
+
+    .sidebar-link:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      text-decoration: none;
+    }
+
+    .sidebar-link.active {
+      background-color: rgba(255, 255, 255, 0.25);
+    }
+      .content {
+      margin-left: 220px;
+      margin-top: 0px; /* height of navbar */
+      padding: 1rem;
+    }
+
+    @media (max-width: 991px) {
+      .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+      }
+
+      .content {
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Optional navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="{% url 'product-list' %}">ShopMate 🛍️</a>
+
+      <!-- Hamburger icon for small screens -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+        aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Navbar links -->
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 mt-10">
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'view-cart' %}">🛒 Cart</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'order-history' %}">📦 My Orders</a>
+            </li>
+            {% if user.is_staff %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'admin-dashboard' %}">🧑‍💼 Admin Dashboard</a>
+              </li>
+            {% endif %}
+            <li class="nav-item">
+              <a class="nav-link text-warning" href="{% url 'contact' %}">📬 Contact</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                {% if user.profile.profile_picture %}
+                  <img src="{{ user.profile.profile_picture.url }}" alt="Profile" class="rounded-circle" width="25" height="25">
+                {% else %}
+                  <img src="{% static 'images/default-avatar.png' %}" alt="Default Avatar" class="rounded-circle" width="20" height="20">
+                {% endif %}
+
+                <span class="ms-2">{{ user.username }}</span>
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'manage-shipping-address' %}">My Address</a></li>
+                <li><a class="dropdown-item" href="{% url 'profile' %}">My Profile</a></li>
+                <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+              </ul>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}">🔐 Login</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    {% block content %}
+    {% endblock %}
+  </div>
+
+  {% if messages %}
+    <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1080;">
+      {% for message in messages %}
+        <div class="toast align-items-center border-0 show text-white
+                    {% if message.tags == 'success' %}bg-success
+                    {% elif message.tags == 'error' or message.tags == 'danger' %}bg-danger
+                    {% elif message.tags == 'warning' %}bg-warning text-dark
+                    {% elif message.tags == 'info' %}bg-info
+                    {% else %}bg-secondary
+                    {% endif %}"
+             role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="d-flex">
+            <div class="toast-body">
+              {{ message }}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.querySelector('form');
+      if (form) {
+        form.addEventListener('submit', function () {
+          const submitBtn = form.querySelector('button[type="submit"]');
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Placing order...';
+          }
+        });
+      }
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const deletionPending = {{ request.user.profile.deletion_pending|yesno:"true,false" }};
+      if (deletionPending) {
+        setTimeout(function () {
+          fetch('/permanent-delete/', {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}',
+              'Content-Type': 'application/json'
+            }
+          }).then(response => {
+            if (response.ok) {
+              window.location.href = '/';
+            }
+          });
+        }, 5000);
+      }
+    });
+  </script>
+
+
+  <script>
+    // Auto fade out alert messages after 3 seconds
+    setTimeout(function() {
+      const alerts = document.querySelectorAll('.fade-message');
+      alerts.forEach(function(alert) {
+        alert.style.transition = 'opacity 0.5s ease-out';
+        alert.style.opacity = '0';
+        setTimeout(() => alert.remove(), 500); // Remove after fade
+      });
+    }, 3000); // 3000ms = 3 seconds
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const toasts = document.querySelectorAll('.toast');
+      toasts.forEach(function (toastEl) {
+        const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+        toast.show();
+      });
+    });
+  </script>
+
+</body>
+</html>

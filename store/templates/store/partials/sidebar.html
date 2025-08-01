@@ -1,0 +1,57 @@
+{% extends 'store/base.html' %}
+
+<div class="bg-dark text-white p-3" style="min-width: 220px; min-height: 100vh;">
+  <h4 class="mb-4">🛒 ShopMate Admin</h4>
+  <ul class="nav nav-pills flex-column mb-auto">
+
+    <!-- Dashboard -->
+    <li class="nav-item d-flex justify-content-between align-items-center">
+      <a href="{% url 'admin-dashboard' %}" class="nav-link {% if request.path == '/admin-dashboard/' %}active{% endif %}">
+        📊 Dashboard
+      </a>
+      {% if new_orders %}
+        <span class="badge bg-danger">{{ new_orders }}</span>
+      {% endif %}
+    </li>
+
+    <!-- Manage Orders -->
+    <li class="nav-item d-flex justify-content-between align-items-center">
+      <a href="{% url 'manage-orders' %}" class="nav-link {% if request.path == '/manage-orders/' %}active{% endif %}">
+        📦 Manage Orders
+      </a>
+      {% if new_orders %}
+        <span class="badge bg-danger">{{ new_orders }}</span>
+      {% endif %}
+    </li>
+
+    <!-- Add Product -->
+    <li class="nav-item">
+      <a href="{% url 'add-product' %}" class="nav-link {% if request.path == '/add-product/' %}active{% endif %}">
+        ➕ Add Product
+      </a>
+    </li>
+
+    <!-- Manage Reviews -->
+    {% if request.user.is_staff %}
+    <li class="nav-item d-flex justify-content-between align-items-center">
+      <a href="{% url 'manage-reviews' %}" class="nav-link {% if request.path == '/manage-reviews/' %}active{% endif %}">
+        📝 Manage Reviews
+      </a>
+      {% if new_pending_reviews %}
+        <span class="badge bg-warning text-dark">{{ new_pending_reviews }}</span>
+      {% endif %}
+    </li>
+    {% endif %}
+
+    <!-- View Shop -->
+    <li class="nav-item">
+      <a href="{% url 'product-list' %}" class="nav-link">🛍️ View Shop</a>
+    </li>
+
+    <!-- Logout -->
+    <li class="nav-item">
+      <a href="{% url 'logout' %}" class="nav-link text-danger">🚪 Logout</a>
+    </li>
+
+  </ul>
+</div>

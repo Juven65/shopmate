@@ -1,0 +1,126 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% load store_extras %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <a href="{% url 'product-list' %}" class="btn btn-outline-danger">
+    <i class="bi bi-arrow-left"></i> Back
+  </a>
+</div>
+
+<form method="get" class="row g-2 mb-5 bg-light p-3 rounded shadow-sm">
+  <div class="col-md-3">
+    <select name="month" class="form-select">
+      <option value="">Select Month</option>
+      {% for i, name in months %}
+        <option value="{{ i }}" {% if selected_month|stringformat:"i" == i|stringformat:"i" %}selected{% endif %}>{{ name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <select name="year" class="form-select">
+      <option value="">Select Year</option>
+      {% for y in years %}
+        <option value="{{ y }}" {% if selected_year|stringformat:"i" == y|stringformat:"i" %}selected{% endif %}>{{ y }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button type="submit" class="btn btn-primary w-100">
+      <i class="bi bi-funnel-fill"></i> Filter
+    </button>
+  </div>
+  <div class="col-md-2">
+    <a href="{% url 'export-orders' %}" class="btn btn-outline-secondary w-100">
+      <i class="bi bi-file-earmark-spreadsheet"></i> CSV
+    </a>
+  </div>
+  <div class="col-md-2">
+    <a href="{% url 'export-orders-pdf' %}?month={{ selected_month }}&year={{ selected_year }}" class="btn btn-outline-danger w-100">
+      <i class="bi bi-file-earmark-pdf"></i> PDF
+    </a>
+  </div>
+</form>
+
+<h4 class="mb-3">📜 Order History</h4>
+<hr>
+
+{% if orders %}
+  {% for order in orders %}
+    <div class="card mb-4 shadow-sm border-0">
+      <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <div>
+          <strong>Order Date:</strong> {{ order.date_ordered|date:"F j, Y – g:i A" }}
+        </div>
+        <div>
+          <span class="fw-bold">Total:</span> ₱{{ order.total_price }}
+        </div>
+      </div>
+      <div class="card-body">
+        <p><strong>Name:</strong> {{ order.name }}</p>
+        <p><strong>Address:</strong> {{ order.address }}</p>
+        <p><strong>Phone:</strong> {{ order.phone }}</p>
+
+        <p><strong>Status:</strong>
+          <span class="badge
+            {% if order.status == 'Pending' %}bg-warning
+            {% elif order.status == 'Processing' %}bg-info
+            {% elif order.status == 'Shipped' %}bg-primary
+            {% elif order.status == 'Out for Delivery' %}bg-secondary
+            {% elif order.status == 'Delivered' %}bg-success
+            {% endif %}
+          ">
+            {{ order.status }}
+          </span>
+        </p>
+
+        <p><strong>Tracking No:</strong>
+          {% if order.tracking_number %}
+            <span class="text-success">{{ order.tracking_number }}</span>
+          {% else %}
+            <span class="text-muted fst-italic">Not yet assigned</span>
+          {% endif %}
+        </p>
+
+        <div class="mt-4">
+          <label class="mb-1"><strong>Tracking Progress:</strong></label>
+          <div class="progress" style="height: 22px;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated
+              {% if order.status == 'Pending' %}bg-warning
+              {% elif order.status == 'Processing' %}bg-info
+              {% elif order.status == 'Shipped' %}bg-primary
+              {% elif order.status == 'Out for Delivery' %}bg-secondary
+              {% elif order.status == 'Delivered' %}bg-success
+              {% endif %}
+            " style="width:
+              {% if order.status == 'Pending' %}20%
+              {% elif order.status == 'Processing' %}40%
+              {% elif order.status == 'Shipped' %}60%
+              {% elif order.status == 'Out for Delivery' %}80%
+              {% elif order.status == 'Delivered' %}100%
+              {% endif %}
+            ">
+              {{ order.status }}
+            </div>
+          </div>
+        </div>
+
+        <h6 class="mt-4">🛍 Items Ordered:</h6>
+        <ul class="list-group">
+          {% for item in order.items.all %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>{{ item.product.name }} <span class="text-muted">(x{{ item.quantity }})</span></div>
+              <div>₱{{ item.price|mul:item.quantity|floatformat:2 }}</div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="alert alert-info">No orders found for this period.</div>
+{% endif %}
+
+{% endblock %}

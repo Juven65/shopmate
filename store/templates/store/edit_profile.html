@@ -1,0 +1,62 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6 bg-light p-4 rounded shadow">
+      <h3 class="mb-4 text-center">✏ Edit Profile</h3>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Profile Picture -->
+        <div class="mb-3 text-center">
+          <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture"
+               class="rounded-circle mb-2" style="width: 120px; height: 120px; object-fit: cover;">
+          <div class="form-text mb-1">Update your photo</div>
+          {{ form.profile_picture }}
+        </div>
+
+        <hr class="my-4">
+        <h5 class="text-center">📦 Shipping Information</h5>
+        <hr class="mb-4">
+
+        <!-- Address -->
+        <div class="mb-3">
+          <label for="id_address" class="form-label">🏠 Address</label>
+          {{ form.address }}
+        </div>
+
+        <!-- City -->
+        <div class="mb-3">
+          <label for="id_city" class="form-label">🏙️ City</label>
+          {{ form.city }}
+        </div>
+
+        <!-- Postal Code -->
+        <div class="mb-3">
+          <label for="id_postal_code" class="form-label">📮 Postal Code</label>
+          {{ form.postal_code }}
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+          <a href="{% url 'profile' %}" class="btn btn-outline-dark">← Back to My Profile</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'store/partials/admin_base.html' %}
+{% block content %}
+<h3>Search Results for "{{ query }}" in Orders</h3>
+<ul>
+  {% for order in results %}
+    <li>
+      <a href="{% url 'order-detail' order.id %}">Order #{{ order.id }} - {{ order.user.username }}</a>
+    </li>
+  {% empty %}
+    <li>No orders found.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends 'store/partials/admin_base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+  <!-- Title & Back Button -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold"><i class="bi bi-box-seam"></i> Manage Orders</h2>
+    <a href="{% url 'admin-dashboard' %}" class="btn btn-outline-danger">
+      <i class="bi bi-arrow-left"></i> Back
+    </a>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered align-middle shadow-sm">
+      <thead class="table-dark">
+        <tr class="text-center">
+          <th>ID</th>
+          <th>User</th>
+          <th>Date</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td class="text-center fw-semibold">{{ order.id }}</td>
+          <td>{{ order.user.username }}</td>
+          <td>{{ order.date_ordered|date:"M d, Y" }}</td>
+          <td>₱{{ order.total_price }}</td>
+          <td>
+            <span class="badge
+              {% if order.status == 'Pending' %}bg-secondary
+              {% elif order.status == 'Processing' %}bg-warning text-dark
+              {% elif order.status == 'Shipped' %}bg-info text-dark
+              {% elif order.status == 'Delivered' %}bg-success
+              {% endif %}">
+              {{ order.status }}
+            </span>
+          </td>
+          <td>
+            <form method="post" action="{% url 'update-order-status' order.id %}" class="d-flex flex-column gap-1">
+              {% csrf_token %}
+              <select name="status" class="form-select form-select-sm">
+                <option value="Pending" {% if order.status == "Pending" %}selected{% endif %}>Pending</option>
+                <option value="Processing" {% if order.status == "Processing" %}selected{% endif %}>Processing</option>
+                <option value="Shipped" {% if order.status == "Shipped" %}selected{% endif %}>Shipped</option>
+                <option value="Delivered" {% if order.status == "Delivered" %}selected{% endif %}>Delivered</option>
+              </select>
+              <button type="submit" class="btn btn-sm btn-primary">💾 Save</button>
+            </form>
+            <a href="{% url 'update-tracking' order.id %}" class="btn btn-sm btn-outline-primary mt-2">
+              ✏️ Tracking
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center text-muted py-3">No orders found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

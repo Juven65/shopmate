@@ -1,0 +1,54 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4">🛍️ Available Products</h1>
+
+  <!-- Search bar -->
+  <form method="get" action="" class="d-flex mb-4">
+    <input type="text" name="q" class="form-control me-2" placeholder="Search products..." value="{{ request.GET.q }}">
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
+
+  <!-- Product Grid -->
+  <div class="row">
+    {% for product in products %}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm border-0 rounded-4">
+
+        <!-- Product Image -->
+        {% if product.image %}
+          <img src="{{ product.image.url }}" class="card-img-top p-3" alt="{{ product.name }}"
+               style="height: 200px; object-fit: contain;">
+        {% else %}
+          <img src="{% static 'no-image.png' %}" class="card-img-top p-3" alt="No image"
+               style="height: 200px; object-fit: contain;">
+        {% endif %}
+
+        <div class="card-body">
+          <a href="{% url 'product-detail' product.id %}" class="text-decoration-none">
+            <h5 class="card-title text-primary">{{ product.name }}</h5>
+            <p class="text-muted mb-1">Stock: {{ product.stock }}</p>
+          </a>
+          <p class="card-text small">{{ product.description|truncatewords:20 }}</p>
+          <h5 class="text-dark">₱{{ product.price }}</h5>
+        </div>
+
+        <div class="card-footer bg-white border-0 d-flex justify-content-between p-3">
+          {% if product.stock > 0 %}
+            <a href="{% url 'add-to-cart' product.id %}" class="btn btn-sm btn-primary w-50 me-2">Add to Cart</a>
+          {% else %}
+            <button class="btn btn-sm btn-secondary w-50 me-2" disabled>Out of Stock</button>
+          {% endif %}
+          <a href="{% url 'view-cart' %}" class="btn btn-sm btn-outline-success w-50">🛒 View Cart</a>
+        </div>
+
+      </div>
+    </div>
+    {% empty %}
+      <p class="text-muted">No products found.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

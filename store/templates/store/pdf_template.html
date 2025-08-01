@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: sans-serif; font-size: 12px; }
+        h2 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h2>Order History for {{ user.username }}</h2>
+
+    {% for order in orders %}
+        <h4>Order Date: {{ order.date_ordered }}</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items.all %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>₱{{ item.price }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="2"><strong>Total:</strong></td>
+                    <td><strong>₱{{ order.total_price }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    {% empty %}
+        <p>No orders found.</p>
+    {% endfor %}
+</body>
+</html>

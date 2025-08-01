@@ -1,0 +1,49 @@
+{% extends 'store/partials/admin_base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3>🔍 Search Results for "{{ query }}"</h3>
+
+  {% if category != 'users' and products %}
+    <h5 class="mt-4">🛍️ Products</h5>
+    <ul>
+      {% for product in products %}
+        <li>
+          <a href="{% url 'update-stock' product.id %}">
+            {{ product.name }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if category != 'products' and users %}
+    <h5 class="mt-4">👤 Users</h5>
+    <ul>
+      {% for user in users %}
+        <li>
+          <a href="#">{{ user.username }}</a> ({{ user.email }})
+          <!-- You can link this to a user detail view if you add one later -->
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if category != 'products' and orders %}
+    <h5 class="mt-4">📦 Orders</h5>
+    <ul>
+      {% for order in orders %}
+        <li>
+          <a href="{% url 'order-detail-admin' order.id %}">
+            Order #{{ order.id }}
+          </a> by {{ order.user.username }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if not products and not users and not orders %}
+    <p class="text-muted">No results found.</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,8 @@
+<p>Hi {{ user.username }},</p>
+<p>Click the link below to activate your ShopMate account:</p>
+<p>
+  <a href="http://{{ domain }}{% url 'activate' uidb64=uid token=token %}">
+    Activate your account
+  </a>
+</p>
+<p>If you didn't request this, you can ignore this email.</p>

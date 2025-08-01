@@ -1,0 +1,248 @@
+{% extends 'store/partials/admin_base.html' %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-md-10 mt-10">
+      <h2 class="mb-4">📊 Admin Dashboard</h2>
+
+      <!-- Summary Cards -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card text-white bg-primary shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title"><i class="bi bi-people"></i> Total Users</h5>
+              <h3>{{ total_users }}</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-white bg-success shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title"><i class="bi bi-box-seam"></i> Total Products</h5>
+              <h3>{{ total_products }}</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-white bg-warning shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title"><i class="bi bi-truck"></i> Total Orders</h5>
+              <h3>{{ total_orders }}</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-white bg-dark shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title"><i class="bi bi-currency-peso"></i> Total Revenue</h5>
+              <h3>₱{{ total_revenue }}</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Row 1: Orders Per Month + Monthly Sales ===== -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-light">
+              <h4 class="mb-0">📈 Orders Per Month</h4>
+            </div>
+            <div class="card-body">
+              <canvas id="ordersChart" height="150"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-light">
+              <h4 class="mb-0">💰 Monthly Sales</h4>
+            </div>
+            <div class="card-body">
+              <canvas id="salesChart" height="150"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Row 2: Order Status Overview ===== -->
+      <div class="row mb-4">
+        <div class="col-md-8 offset-md-2">
+          <div class="card shadow-sm">
+            <div class="card-header bg-light">
+              <h4 class="mb-0">📦 Order Status Overview</h4>
+            </div>
+            <div class="card-body">
+              <canvas id="statusChart" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Stock Table -->
+      <div class="card shadow-sm mt-4">
+        <div class="card-header bg-light">
+          <h4 class="mb-0">🛒 Product Stock</h4>
+        </div>
+        <div class="card-body">
+          <form method="GET" class="mb-3">
+            <div class="row g-2 align-items-center">
+              <div class="col-auto">
+                <label for="stock_filter" class="form-label">Filter Stock:</label>
+              </div>
+              <div class="col-auto">
+                <select name="stock_filter" id="stock_filter" class="form-select" onchange="this.form.submit()">
+                  <option value="">All</option>
+                  <option value="low" {% if stock_filter == "low" %}selected{% endif %}>Low Stock (&lt; 10)</option>
+                  <option value="zero" {% if stock_filter == "zero" %}selected{% endif %}>Out of Stock</option>
+                </select>
+              </div>
+            </div>
+          </form>
+
+          <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Stock</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for product in products %}
+                <tr>
+                  <td>{{ product.id }}</td>
+                  <td>{{ product.name }}</td>
+                  <td>{{ product.stock }}</td>
+                  <td>
+                    <a href="{% url 'update-stock' product.id %}" class="btn btn-sm btn-warning">
+                      Update Stock
+                    </a>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="text-center">No products found.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // ===== Orders Per Month =====
+  const ctxOrders = document.getElementById('ordersChart').getContext('2d');
+  const gradientOrders = ctxOrders.createLinearGradient(0, 0, 0, 400);
+  gradientOrders.addColorStop(0, 'rgba(54, 162, 235, 0.9)');
+  gradientOrders.addColorStop(1, 'rgba(54, 162, 235, 0.3)');
+
+  new Chart(ctxOrders, {
+    type: 'bar',
+    data: {
+      labels: {{ order_months|safe }},
+      datasets: [{
+        label: 'Orders',
+        data: {{ order_counts|safe }},
+        backgroundColor: gradientOrders,
+        borderRadius: 8,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 13, weight: 'bold' } } },
+        y: { beginAtZero: true, grid: { color: 'rgba(200,200,200,0.2)' } }
+      },
+      animation: { duration: 1500, easing: 'easeOutBounce' }
+    }
+  });
+
+  // ===== Monthly Sales =====
+  const ctxSales = document.getElementById('salesChart').getContext('2d');
+  const gradientSales = ctxSales.createLinearGradient(0, 0, 0, 400);
+  gradientSales.addColorStop(0, 'rgba(75, 192, 192, 0.9)');
+  gradientSales.addColorStop(1, 'rgba(75, 192, 192, 0.3)');
+
+  new Chart(ctxSales, {
+    type: 'bar',
+    data: {
+      labels: {{ months|safe }},
+      datasets: [{
+        label: 'Total Sales (₱)',
+        data: {{ sales|safe }},
+        backgroundColor: gradientSales,
+        borderRadius: 8,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: { label: ctx => '₱' + ctx.raw.toLocaleString() }
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 13, weight: 'bold' } } },
+        y: { beginAtZero: true, grid: { color: 'rgba(200,200,200,0.2)' } }
+      },
+      animation: { duration: 1500, easing: 'easeOutBounce' }
+    }
+  });
+
+  // ===== Order Status Pie Chart =====
+  const ctxStatus = document.getElementById('statusChart').getContext('2d');
+  new Chart(ctxStatus, {
+    type: 'pie',
+    data: {
+      labels: ['Delivered', 'Pending', 'Processing', 'Shipped'],
+      datasets: [{
+        data: [
+          {{ delivered_count }},
+          {{ pending_count }},
+          {{ processing_count }},
+          {{ shipped_count }}
+        ],
+        backgroundColor: [
+          'rgba(75, 192, 192, 0.9)',
+          'rgba(255, 206, 86, 0.9)',
+          'rgba(54, 162, 235, 0.9)',
+          'rgba(255, 99, 132, 0.9)'
+        ],
+        borderColor: '#fff',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 14, weight: 'bold' } } },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const value = context.raw;
+              const total = context.dataset.data.reduce((a, b) => a + b, 0);
+              const percentage = ((value / total) * 100).toFixed(1);
+              return `${context.label}: ${value} (${percentage}%)`;
+            }
+          }
+        }
+      },
+      animation: { duration: 1500, easing: 'easeOutCirc' }
+    }
+  });
+</script>
+</div>
+{% endblock %}
