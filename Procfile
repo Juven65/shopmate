@@ -1,1 +1,1 @@
-web: gunicorn shopmate.wsgi
+web: gunicorn shopmate.wsgi:application
