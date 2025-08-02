@@ -59,7 +59,6 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
 
-    # ✅ Add this:
     path('add-product/', views.add_product, name='add-product'),
     path('checkout/', views.checkout, name='checkout'),
 ]
