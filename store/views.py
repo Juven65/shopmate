@@ -367,7 +367,7 @@ def export_orders_pdf(request):
 
 @staff_member_required
 def admin_dashboard(request):
-    tz = timezone.get_current_timezone()  # Asia/Manila timezone
+    tz = timezone.get_current_timezone()  
 
     # ====== Basic Stats ======
     total_users = User.objects.count()
@@ -450,7 +450,7 @@ def update_stock(request, product_id):
         if form.is_valid():
             form.save()
             messages.success(request, 'Stock updated successfully!')
-            return redirect('admin-dashboard')  # or wherever you list products
+            return redirect('admin-dashboard')  
     else:
         form = StockUpdateForm(instance=product)
 
@@ -487,8 +487,8 @@ def contact_view(request):
             send_mail(
                 subject=f"New Contact Message: {contact.subject}",
                 message=f"From: {contact.name} <{contact.email}>\n\n{contact.message}",
-                from_email=None,  # Uses DEFAULT_FROM_EMAIL
-                recipient_list=['juvenpinoy@gmail.com'],  # ← change to your actual email
+                from_email=None,  
+                recipient_list=['juvenpinoy@gmail.com'],  
                 fail_silently=False,
             )
 
@@ -609,7 +609,7 @@ def profile_view(request):
             profile_form.save()
 
             shipping = shipping_form.save(commit=False)
-            shipping.user = request.user  # always set
+            shipping.user = request.user 
             shipping.save()
 
             messages.success(request, 'Profile and shipping info updated successfully.')
@@ -630,14 +630,14 @@ def profile_view(request):
 
 @login_required
 def edit_profile(request):
-    profile = request.user.profile  # get the current logged-in user's profile
+    profile = request.user.profile 
 
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
             messages.success(request, '✅ Your profile has been updated successfully!')
-            return redirect('profile')  # after update, go back to profile page
+            return redirect('profile')  
     else:
         form = ProfileForm(instance=profile)
 
@@ -656,7 +656,7 @@ def edit_review(request, review_id):
     else:
         form = ReviewForm(instance=review)
 
-    return render(request, 'store/edit_review.html', {'form': form, 'review': review})  # ← ADD `review`
+    return render(request, 'store/edit_review.html', {'form': form, 'review': review})  
 
 
 @login_required
@@ -720,7 +720,7 @@ def edit_shipping(request):
         if form.is_valid():
             form.save()
             messages.success(request, "✅ Shipping address updated successfully!")
-            return redirect('profile')  # redirect to profile page after save
+            return redirect('profile') 
     else:
         form = ShippingAddressForm(instance=shipping_address)
 
@@ -748,7 +748,7 @@ def delete_account_confirm(request):
         logout(request)
         messages.success(request, "Your account has been deleted successfully.")
         return redirect('home')
-    return redirect('delete_account')  # fallback if GET
+    return redirect('delete_account')  
 
 @login_required
 def cancel_delete(request):
@@ -778,6 +778,6 @@ def update_tracking_number(request, order_id):
 
     if form.is_valid():
         form.save()
-        return redirect('manage-orders')  # or back to a detail page
+        return redirect('manage-orders') 
 
     return render(request, 'store/update_tracking.html', {'form': form, 'order': order})
