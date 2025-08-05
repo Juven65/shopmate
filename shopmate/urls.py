@@ -15,6 +15,6 @@ urlpatterns = [
     path('reset-complete/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 ]
 
-# ✅ Serve user files during development
+# ✅ Serve media files in local dev
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

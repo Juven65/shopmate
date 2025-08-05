@@ -1,6 +1,10 @@
 import os
 from pathlib import Path
-from decouple import config  # Para mabasa ang .env sa local
+from decouple import config
+import dj_database_url
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,6 +27,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'store',
     'widget_tweaks',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 # =====================
@@ -62,13 +68,11 @@ WSGI_APPLICATION = 'shopmate.wsgi.application'
 
 # =====================
 # Database
-# (Default SQLite — pwede palitan sa Render gamit dj-database-url)
 # =====================
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
+    )
 }
 
 # =====================
@@ -90,14 +94,33 @@ USE_I18N = True
 USE_TZ = True
 
 # =====================
-# Static & Media Files
+# Static Files
 # =====================
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# =====================
+# Media Files
+# =====================
+if DEBUG:
+    # Local dev - store in local /media/ folder
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+else:
+    # Production - store in Cloudinary
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
+        'API_KEY': config('CLOUDINARY_API_KEY'),
+        'API_SECRET': config('CLOUDINARY_API_SECRET'),
+    }
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    # For Cloudinary, MEDIA_URL is usually the delivery base URL
+    MEDIA_URL = f"https://res.cloudinary.com/{config('CLOUDINARY_CLOUD_NAME')}/"
+
 
 # =====================
 # Auth Redirects
@@ -114,5 +137,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
-
-DEFAULT_FROM_EMAIL = 'noreply@shopmate.com'
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="noreply@shopmate.com")

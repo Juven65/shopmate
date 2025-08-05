@@ -1,1 +1,1 @@
-web: gunicorn shopmate.wsgi:application
+web: python manage.py migrate && gunicorn shopmate.wsgi:application
