@@ -8,12 +8,13 @@
 
 ![ShopMate Demo](screenshots/demo.gif)
 
-**ShopMate** is a fully functional **e-commerce web application** built with Django.  
-It includes both **essential** and **advanced** features such as product management, shopping cart,  
-order checkout, user-specific order history with PDF/CSV export, profile management,  
-and a powerful admin dashboard with **interactive charts** and **stock management**.
+📖 Overview
 
----
+ShopMate is a full-stack e-commerce web application built using Django.
+It allows users to register, browse products, add them to cart, and securely checkout.
+The system includes an admin dashboard for managing products, orders, and customers — all within a clean, responsive Bootstrap UI.
+
+This project helped me strengthen my understanding of Django’s Model-View-Template (MVT) pattern, authentication system, and deployment workflow on Render.
 
 ## 📚 Table of Contents
 - [🚀 Features](#-features)
@@ -59,6 +60,19 @@ and a powerful admin dashboard with **interactive charts** and **stock managemen
 
 ---
 
+## 🧠 What I Learned
+Structuring Django apps with clear separation of models, views, and templates
+
+Handling user sessions and cart management
+
+Using Django ORM for database queries
+
+Integrating static and media files
+
+Deploying a Django project on Render with database configuration
+
+Writing maintainable and readable code through modular design
+
 ## 🧪 Tech Stack
 
 - **Backend**: [Django 5+](https://docs.djangoproject.com/en/stable/)  
@@ -102,6 +116,9 @@ and a powerful admin dashboard with **interactive charts** and **stock managemen
 
 ---
 
+## 🚀 Deployment
+Live Demo: https://shopmate-3ygr.onrender.com
+
 ## ⚙️ Setup Instructions
 
 ```bash
@@ -129,3 +146,12 @@ python manage.py createsuperuser
 
 # Run the development server
 python manage.py runserver
+
+## 🧑‍💻 Developer
+Juven Pinoy
+📚 Information Technology Graduate – Carlos Hilado Memorial State University (2025)
+
+## 💬 Developer’s Note
+
+“This project was built with the help of ChatGPT for guidance and learning purposes.
+I customized, studied, and managed every feature to understand how Django works in real-world e-commerce applications.”
