@@ -115,6 +115,23 @@ This project helped me strengthen my understanding of Django’s **Model-View-Te
 
 ---
 
+## 🚀 Deployment
+**Live Demo:** [https://shopmate-3ygr.onrender.com](https://shopmate-3ygr.onrender.com)
+
+---
+
+## 👨‍💻 Developer
+**Juven Pinoy**  
+🎓 Information Technology Graduate – Carlos Hilado Memorial State University (2025)  
+🌐 [GitHub Profile](https://github.com/Juven65)
+
+---
+
+## 💬 Developer’s Note
+> “This project was built with the help of ChatGPT for guidance and learning purposes.  
+> I customized, studied, and managed every feature to understand how Django works in real-world e-commerce applications.”
+
+
 ## ⚙️ Setup Instructions
 
 ```bash
@@ -142,3 +159,4 @@ python manage.py createsuperuser
 
 # Run the development server
 python manage.py runserver
+
