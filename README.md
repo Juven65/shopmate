@@ -8,22 +8,27 @@
 
 ![ShopMate Demo](screenshots/demo.gif)
 
-📖 Overview
+---
 
-ShopMate is a full-stack e-commerce web application built using Django.
-It allows users to register, browse products, add them to cart, and securely checkout.
-The system includes an admin dashboard for managing products, orders, and customers — all within a clean, responsive Bootstrap UI.
+## 📖 Overview
 
-This project helped me strengthen my understanding of Django’s Model-View-Template (MVT) pattern, authentication system, and deployment workflow on Render.
+**ShopMate** is a full-stack e-commerce web application built using **Django**.  
+It allows users to register, browse products, add them to cart, and securely checkout.  
+The system includes an **admin dashboard** for managing products, orders, and customers — all within a clean, responsive **Bootstrap UI**.
+
+This project helped me strengthen my understanding of Django’s **Model-View-Template (MVT)** pattern, authentication system, and deployment workflow on Render.
+
+---
 
 ## 📚 Table of Contents
 - [🚀 Features](#-features)
 - [🧪 Tech Stack](#-tech-stack)
 - [📸 Screenshots](#-screenshots)
 - [⚙️ Setup Instructions](#️-setup-instructions)
-- [🌐 Live Demo](#-live-demo)
+- [🚀 Deployment](#-deployment)
+- [👨‍💻 Developer](#-developer)
+- [💬 Developer’s Note](#-developers-note)
 - [📜 License](#-license)
-- [👨‍💻 Author](#-author)
 
 ---
 
@@ -53,25 +58,22 @@ This project helped me strengthen my understanding of Django’s Model-View-Temp
 ✅ Admin Activity Logs  
 
 📊 **Enhanced Admin Dashboard Charts**  
-- **Orders Per Month** – Professional gradient bar chart with rounded corners & smooth animations  
-- **Monthly Sales** – Peso-formatted gradient bar chart for visualizing revenue trends  
+- **Orders Per Month** – Gradient bar chart with rounded corners & smooth animations  
+- **Monthly Sales** – Peso-formatted chart for revenue visualization  
 - **Order Status Overview** – Interactive pie chart with percentage tooltips  
 - **Product Stock Table** – Filter products by Low Stock or Out of Stock  
 
 ---
 
 ## 🧠 What I Learned
-Structuring Django apps with clear separation of models, views, and templates
+- Structuring Django apps with clear separation of models, views, and templates  
+- Handling user sessions and cart management  
+- Using Django ORM for database queries  
+- Integrating static and media files  
+- Deploying a Django project on Render  
+- Writing maintainable and modular Django code  
 
-Handling user sessions and cart management
-
-Using Django ORM for database queries
-
-Integrating static and media files
-
-Deploying a Django project on Render with database configuration
-
-Writing maintainable and readable code through modular design
+---
 
 ## 🧪 Tech Stack
 
@@ -108,25 +110,10 @@ Writing maintainable and readable code through modular design
 ### 📊 Admin Dashboard (Orders Per Month + Monthly Sales + Order Status)
 ![Admin Dashboard](screenshots/admin-dashboard.png)
 
-### 📊 Admin Dashboard (Order Status)
-![Admin Dashboard Status](screenshots/admin-dashboard-status.png)
-
 ### 📦 Manage Stock (Low Stock & Out of Stock Filters)
 ![Manage Stock](screenshots/manage-stock.png)
 
 ---
-
-## 🚀 Deployment
-Live Demo: https://shopmate-3ygr.onrender.com
-
-## 🧑‍💻 Developer
-Juven Pinoy
-📚 Information Technology Graduate – Carlos Hilado Memorial State University (2025)
-
-## 💬 Developer’s Note
-
-“This project was built with the help of ChatGPT for guidance and learning purposes.
-I customized, studied, and managed every feature to understand how Django works in real-world e-commerce applications.”
 
 ## ⚙️ Setup Instructions
 
@@ -155,5 +142,3 @@ python manage.py createsuperuser
 
 # Run the development server
 python manage.py runserver
-
-
